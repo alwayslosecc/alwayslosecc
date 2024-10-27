@@ -1,0 +1,36 @@
+document.addEventListener("DOMContentLoaded", () => {
+    const generateKeyBtn = document.getElementById("generateKeyBtn");
+    const keyDisplay = document.getElementById("keyDisplay");
+    const keysList = document.getElementById("keysList");
+
+    // Fetch and display all keys when the page loads
+    fetchKeys();
+
+    // Generate a new key when the button is clicked
+    generateKeyBtn.addEventListener("click", async () => {
+        const response = await fetch("/generate-key");
+        const data = await response.json();
+        const newKey = data.key;
+        
+        // Display the newly generated key
+        keyDisplay.textContent = `Generated Key: ${newKey}`;
+
+        // Add the new key to the list
+        const listItem = document.createElement("li");
+        listItem.textContent = newKey;
+        keysList.appendChild(listItem);
+    });
+
+    // Fetch all keys from the server
+    async function fetchKeys() {
+        const response = await fetch("/keys");
+        const data = await response.json();
+        keysList.innerHTML = ""; // Clear the list
+
+        data.keys.forEach((key) => {
+            const listItem = document.createElement("li");
+            listItem.textContent = key;
+            keysList.appendChild(listItem);
+        });
+    }
+});
